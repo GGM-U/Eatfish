@@ -18,7 +18,6 @@ public class Background {
                 GameUtils.drawWord(g,"得分"+GameUtils.count,Color.MAGENTA,50,180,120);
                 GameUtils.drawWord(g,"难度"+GameUtils.level,Color.MAGENTA,50,600,120);
                 GameUtils.drawWord(g,"等级"+fishLevel,Color.red,50,1000,120);
-                GameUtils.drawWord(g,"gg",Color.cyan,300,600,400);
                 break;
             case 3:
                 GameUtils.drawWord(g,"得分"+GameUtils.count,Color.MAGENTA,50,180,120);
