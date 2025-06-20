@@ -40,6 +40,7 @@ public class MyFish {
             x+=speed;
             img=GameUtils.Myfishing_R;
         }
+
     }
     // 绘制我方鱼类的方法，先处理移动逻辑，再绘制鱼类图片
     public void paintSelf(Graphics g)
@@ -53,6 +54,7 @@ public class MyFish {
         return new Rectangle(x,y,width+GameUtils.count,height+GameUtils.count);
     }
     // 表示我方鱼类是否处于护盾保护状态
+
     public boolean isShielded = false;
 
 

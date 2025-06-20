@@ -1,13 +1,20 @@
+// 声明该类所属的包为 com.tex
 package com.tex;
-
+// 导入 javax.swing 包中的 JFrame 类，用于创建窗口
 import javax.swing.*;
+// 导入 java.awt 包中的相关类，用于图形绘制和事件处理
 import java.awt.*;
+// 导入键盘事件适配器类，用于处理键盘事件
 import java.awt.event.*;
 import java.io.File;
 import java.util.Scanner;
 
+/**
+ * GameWin 类继承自 JFrame，用于创建游戏窗口并管理游戏的主循环和绘制逻辑。
+ * 该类负责处理用户的鼠标和键盘输入，控制游戏的状态，生成敌人和道具，以及进行碰撞检测等操作。
+ */
 public class GameWin extends JFrame {
-    // 定义窗体的状态，0表示未开始，1表示游戏中，2表示游戏失败，3表示游戏胜利，4表示特定状态
+
     static int state = 0; // 窗体状态：0=主菜单,1=游戏中,2=游戏结束,3=胜利
     // 双缓冲技术使用的离屏图像
     Image offScreenImage;
@@ -50,23 +57,42 @@ public class GameWin extends JFrame {
         // 👇 先添加键盘监听器到 this（JFrame）
         this.setFocusable( true);
         this.requestFocusInWindow();
+        // 添加键盘事件监听器，用于控制玩家鱼类的移动
         this.addKeyListener(new KeyAdapter() {
             @Override
+            // 处理键盘按键按下事件
             public void keyPressed(KeyEvent e) {
                 int code = e.getKeyCode();
+                // 使用 WASD 键进行移动控制
+                // 如果按下的是 W 键
                 if (code == KeyEvent.VK_W) GameUtils.UP = true;
+                // 如果按下的是 S 键
                 if (code == KeyEvent.VK_S) GameUtils.DOWN = true;
+                // 如果按下的是 A 键
                 if (code == KeyEvent.VK_A) GameUtils.LEFT = true;
+                // 如果按下的是 D 键
                 if (code == KeyEvent.VK_D) GameUtils.RIGHT = true;
+                //// 如果按下的是 P 键
                 if (code == KeyEvent.VK_P) togglePause();
             }
 
             @Override
+            // 处理键盘按键释放事件
             public void keyReleased(KeyEvent e) {
                 int code = e.getKeyCode();
+                // 松开按键后，相应的移动标志设置为 false
+                // 如果松开的是 W 键
                 if (code == KeyEvent.VK_W) GameUtils.UP = false;
+
+                // 松开按键后，相应的移动标志设置为 false
+                // 如果松开的是 S 键
                 if (code == KeyEvent.VK_S) GameUtils.DOWN = false;
+                // 松开按键后，相应的移动标志设置为 false
+                // 如果松开的是 A 键
                 if (code == KeyEvent.VK_A) GameUtils.LEFT = false;
+
+                // 松开按键后，相应的移动标志设置为 false
+                // 如果松开的是 D 键
                 if (code == KeyEvent.VK_D) GameUtils.RIGHT = false;
             }
         });
@@ -141,12 +167,16 @@ public class GameWin extends JFrame {
                 }
                 break;
             case 2:
-                // 游戏失败状态，绘制敌方鱼类和Boss
+
+                // 游戏失败状态
+                // 遍历敌方鱼类列表，绘制所有敌方鱼类
                 for (Enemy enemy : GameUtils.enemyList) {
                     enemy.paintSelf(gImage);
                 }
                 if (isboss && boss != null) {
+                    // 更新 Boss 的位置
                     boss.x += boss.dir + boss.speed;
+                    // 绘制 Boss
                     boss.paintSelf(gImage);
                 }
 
@@ -210,7 +240,12 @@ public class GameWin extends JFrame {
         state = 0;
     }
 
-    // 游戏逻辑处理方法，包括关卡等级判断、敌方鱼类生成、碰撞检测和道具处理
+    /**
+     * 处理游戏逻辑的方法。
+     * 根据玩家的得分计算游戏关卡等级和玩家鱼类的等级。
+     * 按照不同的关卡等级，以一定的时间间隔随机生成不同类型的敌方鱼类。
+     * 进行碰撞检测，处理玩家鱼类与敌方鱼类、道具的碰撞事件。
+     */
     void logic() {
         // 根据得分判断关卡等级和我方鱼类等级
         if (GameUtils.count < 5) {
@@ -237,6 +272,7 @@ public class GameWin extends JFrame {
         // 根据关卡等级生成不同类型的敌方鱼类
         switch (GameUtils.level) {
             case 4:
+                // 关卡等级为 4 时，每 50 帧有 50% 的概率生成 Boss
                 if (time % 50 == 0 && Math.random() > 0.5) {
                     boss = new EnemyBoss();
                     isboss = true;
@@ -244,30 +280,37 @@ public class GameWin extends JFrame {
                 }
             case 3:
             case 2:
+                // 关卡等级为 2 或 3 时，每 30 帧有 50% 的概率生成 EnemyC 或 EnemyC_2
                 if (time % 30 == 0) {
                     if (Math.random() > 0.5) {
                         enemy = new EnemyC();
                     } else {
                         enemy = new EnemyC_2();
                     }
+                    // 将生成的敌方鱼类添加到敌方鱼类列表中
                     GameUtils.enemyList.add(enemy);
                 }
             case 1:
+                // 关卡等级为 1 时，每 20 帧有 50% 的概率生成 EnemyB 或 EnemyB_2
                 if (time % 20 == 0) {
                     if (Math.random() > 0.5) {
                         enemy = new EnemyB();
                     } else {
                         enemy = new EnemyB_2();
                     }
+                    // 将生成的敌方鱼类添加到敌方鱼类列表中
                     GameUtils.enemyList.add(enemy);
                 }
             case 0:
+                // 关卡等级为 0 时，每 10 帧有 50% 的概率生成 EnemyA 或 EnemyA_2
+
                 if (time % 10 == 0) {
                     if (Math.random() > 0.5) {
                         enemy = new EnemyA();
                     } else {
                         enemy = new EnemyA_2();
                     }
+                    // 将生成的敌方鱼类添加到敌方鱼类列表中
                     GameUtils.enemyList.add(enemy);
                 }
                 break;
@@ -277,24 +320,34 @@ public class GameWin extends JFrame {
         for (Enemy enemy : GameUtils.enemyList) {
             enemy.x += enemy.dir + enemy.speed;
 
+            // 如果出现 Boss
             if (isboss && boss != null) {
+                // 如果 Boss 与敌方鱼类发生碰撞
                 if (boss.getRec().intersects(enemy.getRec())) {
                     enemy.x = -200;
                     enemy.y = -200;
                 }
+                // 如果 Boss 与玩家鱼类发生碰撞
                 if (boss.getRec().intersects(myFish.getRec())) {
+                    // 游戏失败
                     state = 2;
                 }
             }
 
             // 碰撞检测
             if (myFish.getRec().intersects(enemy.getRec())) {
+                // 如果玩家鱼类的等级大于等于敌方鱼类的等级
                 if (myFish.level >= enemy.tybe) {
+                    // 打印碰撞信息
                     System.out.println("碰撞了");
+                    // 将被吃掉的敌方鱼类移出屏幕
+
                     enemy.x = -200;
                     enemy.y = -200;
+                    // 增加玩家的得分
                     GameUtils.count += enemy.count;
                 } else {
+                    // 玩家鱼类等级小于敌方鱼类等级，游戏失败
                     state = 2;
                 }
             }
@@ -306,17 +359,28 @@ public class GameWin extends JFrame {
         }
         // 道具碰撞检测
         if (prop != null && myFish.getRec().intersects(prop.getRec())) {
+            // 应用道具效果
             applyPropEffect(prop.type);
+            // 播放道具获取音效
             SoundUtils.play("sound/prop.wav");
+            // 使用后移除道具
             prop = null;
         }
     }
 
-    // 应用道具效果的方法，根据道具类型不同，产生不同的效果
+    /**
+     * 应用道具效果的方法。
+     * 根据道具的类型，为玩家鱼类提供不同的效果，如加速、护盾、得分翻倍等。
+     * 部分效果具有持续时间，使用 Timer 类在一定时间后恢复原状。
+     *
+     *  type 道具的类型，包括 SPEED_UP（加速）、SHIELD（护盾）、SCORE_DOUBLE（得分翻倍）
+     */
     private void applyPropEffect(Prop.Type type) {
         switch (type) {
             case SPEED_UP:
+                // 加速效果，玩家鱼类速度增加 10
                 myFish.speed += 10;
+                // 使用 Timer 类在 5 秒后恢复玩家鱼类的速度
                 new java.util.Timer().schedule(
                         new java.util.TimerTask() {
                             @Override
@@ -326,7 +390,7 @@ public class GameWin extends JFrame {
                         }, 5000);
                 break;
             case SHIELD:
-
+                // 护盾效果，玩家鱼类获得无敌状态 5 秒
                 System.out.println("获得护盾！无敌5秒");
                 // 开启护盾状态
                 myFish.isShielded = true;
@@ -340,7 +404,9 @@ public class GameWin extends JFrame {
                         }, 5000);
                 break;
             case SCORE_DOUBLE:
+                // 得分翻倍效果，示例中直接增加 10 分
                 GameUtils.count += 10;
+                // 或者可以开启一个临时计数器，让每吃一个敌人得分翻倍
                 break;
         }
     }
@@ -511,8 +577,16 @@ public class GameWin extends JFrame {
         return panel;
     }
 
+    /**
+     * 程序的入口点。
+     * 创建 GameWin 类的实例，并调用 launch 方法启动游戏。
+     *
+     * 命令行参数
+     */
     public static void main(String[] args) {
+
         GameWin gameWin = new GameWin();
+
         gameWin.launch();
     }
 }
